@@ -12,7 +12,7 @@ assert(fn, "MacLib baixada mas inválida: " .. tostring(errCompilar))
 local MacLib = fn()
 
 local Window = MacLib:Window({
-    Title        = "Meu Script Hub",
+    Title        = "Cypher Menu",
     Subtitle     = "v1.0",
     Size         = UDim2.fromOffset(700, 480),
     DragStyle    = 2,
