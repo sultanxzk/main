@@ -2,43 +2,47 @@
 local Hub = getgenv().Hub
 
 local MacLib = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/Enow-Development/maclib-extended/refs/heads/main/maclib.lua"
+    "https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.lua"
 ))()
-
-local ICONE = "rbxassetid://10734950309"
 
 local Window = MacLib:Window({
     Title    = "Meu Script Hub",
     Subtitle = "v1.0",
+    Size     = UDim2.fromOffset(700, 480),
+    Keybind  = Enum.KeyCode.RightControl, -- mostra/esconde o menu
+    AcrylicBlur = true,
 })
 
+-- As abas ficam dentro de um TabGroup
+local Grupo = Window:TabGroup()
+
 -- ===== ABA: MOVIMENTO =====
-local TabMov = Window:Tab({ Name = "Movimento", Icon = ICONE })
+local TabMov = Grupo:Tab({ Name = "Movimento", Image = "rbxassetid://18821914323" })
 local SecMov = TabMov:Section({ Side = "Left" })
 
 SecMov:Toggle({
     Name     = "Speed Hack",
     Default  = false,
-    Flag     = "SpeedToggle",
     Callback = function(v)
         Hub.Estado.Speed = v
         Hub.Executar("speed")
     end,
-})
+}, "SpeedToggle")
 
 SecMov:Slider({
-    Name     = "Velocidade",
-    Min      = 16,
-    Max      = 200,
-    Default  = 50,
-    Flag     = "SpeedSlider",
+    Name          = "Velocidade",
+    Default       = 50,
+    Minimum       = 16,
+    Maximum       = 200,
+    DisplayMethod = "Round",
+    Precision     = 0,
     Callback = function(v)
         Hub.Valores.SpeedValor = v
     end,
-})
+}, "SpeedSlider")
 
 -- ===== ABA: JOGADOR (exemplo) =====
-local TabJog = Window:Tab({ Name = "Jogador", Icon = ICONE })
+local TabJog = Grupo:Tab({ Name = "Jogador", Image = "rbxassetid://18821914323" })
 local SecJog = TabJog:Section({ Side = "Left" })
 
 SecJog:Button({
@@ -49,7 +53,7 @@ SecJog:Button({
 })
 
 -- ===== ABA: CONFIG =====
-local TabCfg = Window:Tab({ Name = "Config", Icon = ICONE })
+local TabCfg = Grupo:Tab({ Name = "Config", Image = "rbxassetid://18821914323" })
 local SecCfg = TabCfg:Section({ Side = "Left" })
 
 SecCfg:Button({
@@ -59,4 +63,13 @@ SecCfg:Button({
     end,
 })
 
-TabCfg:InsertConfigSection("Right") -- salvar/carregar configs (usa as Flags)
+-- Salvamento de configs (usa as flags "SpeedToggle" e "SpeedSlider")
+pcall(function()
+    MacLib:SetFolder("MeuScriptHub")
+    TabCfg:InsertConfigSection("Right")
+end)
+
+-- Abre já na primeira aba
+TabMov:Select()
+
+pcall(function() MacLib:LoadAutoLoadConfig() end)
