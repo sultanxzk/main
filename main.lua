@@ -1,6 +1,6 @@
 -- main.lua | Injetor: é o único arquivo que você executa no executor
-local USUARIO = "SEU_USUARIO"
-local REPO    = "meu-script-hub"
+local USUARIO = "sultanxzk"
+local REPO    = "main"
 local BRANCH  = "main"
 
 local BASE = ("https://raw.githubusercontent.com/%s/%s/%s/"):format(USUARIO, REPO, BRANCH)
