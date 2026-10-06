@@ -5,61 +5,58 @@ local MacLib = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/Enow-Development/maclib-extended/refs/heads/main/maclib.lua"
 ))()
 
+local ICONE = "rbxassetid://10734950309"
+
 local Window = MacLib:Window({
     Title    = "Meu Script Hub",
     Subtitle = "v1.0",
 })
 
--- Grupo de abas (obrigatório para aparecerem na barra lateral)
-local Grupo = Window:TabGroup()
-
 -- ===== ABA: MOVIMENTO =====
-local TabMov = Grupo:Tab({ Name = "Movimento" })
+local TabMov = Window:Tab({ Name = "Movimento", Icon = ICONE })
 local SecMov = TabMov:Section({ Side = "Left" })
 
 SecMov:Toggle({
-    Name    = "Speed Hack",
-    Default = false,
+    Name     = "Speed Hack",
+    Default  = false,
+    Flag     = "SpeedToggle",
     Callback = function(v)
         Hub.Estado.Speed = v
         Hub.Executar("speed")
     end,
-}, "SpeedToggle")
+})
 
 SecMov:Slider({
-    Name          = "Velocidade",
-    Default       = 50,
-    Minimum       = 16,
-    Maximum       = 200,
-    DisplayMethod = "Round",
-    Precision     = 0,
+    Name     = "Velocidade",
+    Min      = 16,
+    Max      = 200,
+    Default  = 50,
+    Flag     = "SpeedSlider",
     Callback = function(v)
         Hub.Valores.SpeedValor = v
     end,
-}, "SpeedSlider")
+})
 
 -- ===== ABA: JOGADOR (exemplo) =====
-local TabJog = Grupo:Tab({ Name = "Jogador" })
+local TabJog = Window:Tab({ Name = "Jogador", Icon = ICONE })
 local SecJog = TabJog:Section({ Side = "Left" })
 
 SecJog:Button({
-    Name = "Exemplo de botão",
+    Name     = "Exemplo de botão",
     Callback = function()
         Hub.Executar("NomeDaFuncao") -- troque pelo nome do seu .lua
     end,
 })
 
 -- ===== ABA: CONFIG =====
-local TabCfg = Grupo:Tab({ Name = "Config" })
+local TabCfg = Window:Tab({ Name = "Config", Icon = ICONE })
 local SecCfg = TabCfg:Section({ Side = "Left" })
 
 SecCfg:Button({
-    Name = "Descarregar Hub",
+    Name     = "Desligar todas as funções",
     Callback = function()
         Hub.Desligar()
-        Window:Unload()
     end,
 })
 
--- Abre já na primeira aba
-TabMov:Select()
+TabCfg:InsertConfigSection("Right") -- salvar/carregar configs (usa as Flags)
