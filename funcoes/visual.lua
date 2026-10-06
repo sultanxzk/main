@@ -1,32 +1,84 @@
--- funcoes/speed.lua | Lógica pura, sem UI
+-- visual.lua | Apenas interface. Callbacks só disparam os arquivos de funcoes/
 local Hub = getgenv().Hub
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 
-local VELOCIDADE_PADRAO = 16
+-- Carrega a MacLib com checagem de erro clara
+local URL_LIB = "https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.txt"
+local okHttp, codigo = pcall(game.HttpGet, game, URL_LIB)
+assert(okHttp and type(codigo) == "string", "Falha ao baixar a MacLib: " .. tostring(codigo))
 
--- Sempre limpa a conexão anterior (o arquivo roda a cada toggle)
-if Hub.Conexoes.Speed then
-    Hub.Conexoes.Speed:Disconnect()
-    Hub.Conexoes.Speed = nil
-end
+local fn, errCompilar = loadstring(codigo)
+assert(fn, "MacLib baixada mas inválida: " .. tostring(errCompilar))
 
-local function getHumanoid()
-    local char = LocalPlayer.Character
-    return char and char:FindFirstChildOfClass("Humanoid")
-end
+local MacLib = fn()
 
-if Hub.Estado.Speed then
-    Hub.Conexoes.Speed = RunService.Heartbeat:Connect(function()
-        local hum = getHumanoid()
-        if hum then
-            hum.WalkSpeed = Hub.Valores.SpeedValor or 50
-        end
-    end)
-else
-    local hum = getHumanoid()
-    if hum then
-        hum.WalkSpeed = VELOCIDADE_PADRAO
-    end
-end
+local Window = MacLib:Window({
+    Title        = "Meu Script Hub",
+    Subtitle     = "v1.0",
+    Size         = UDim2.fromOffset(700, 480),
+    DragStyle    = 2,
+    DisabledWindowControls = {},
+    ShowUserInfo = true,
+    Keybind      = Enum.KeyCode.RightControl, -- mostra/esconde o menu
+    AcrylicBlur  = true,
+})
+
+-- As abas ficam dentro de um TabGroup
+local Grupo = Window:TabGroup()
+
+-- ===== ABA: MOVIMENTO =====
+local TabMov = Grupo:Tab({ Name = "Movimento", Image = "rbxassetid://18821914323" })
+local SecMov = TabMov:Section({ Side = "Left" })
+
+SecMov:Toggle({
+    Name     = "Speed Hack",
+    Default  = false,
+    Callback = function(v)
+        Hub.Estado.Speed = v
+        Hub.Executar("speed")
+    end,
+}, "SpeedToggle")
+
+SecMov:Slider({
+    Name          = "Velocidade",
+    Default       = 50,
+    Minimum       = 16,
+    Maximum       = 200,
+    DisplayMethod = "Round",
+    Precision     = 0,
+    Callback = function(v)
+        Hub.Valores.SpeedValor = v
+    end,
+}, "SpeedSlider")
+
+-- ===== ABA: JOGADOR (exemplo) =====
+local TabJog = Grupo:Tab({ Name = "Jogador", Image = "rbxassetid://18821914323" })
+local SecJog = TabJog:Section({ Side = "Left" })
+
+SecJog:Button({
+    Name     = "Exemplo de botão",
+    Callback = function()
+        Hub.Executar("NomeDaFuncao") -- troque pelo nome do seu .lua
+    end,
+})
+
+-- ===== ABA: CONFIG =====
+local TabCfg = Grupo:Tab({ Name = "Config", Image = "rbxassetid://18821914323" })
+local SecCfg = TabCfg:Section({ Side = "Left" })
+
+SecCfg:Button({
+    Name     = "Desligar todas as funções",
+    Callback = function()
+        Hub.Desligar()
+    end,
+})
+
+-- Salvamento de configs (usa as flags "SpeedToggle" e "SpeedSlider")
+pcall(function()
+    MacLib:SetFolder("MeuScriptHub")
+    TabCfg:InsertConfigSection("Right")
+end)
+
+-- Abre já na primeira aba
+TabMov:Select()
+
+pcall(function() MacLib:LoadAutoLoadConfig() end)
