@@ -1,14 +1,14 @@
--- true se algum assento do carro tiver alguém sentado
-local function temOcupante(carro)
-    for _, d in ipairs(carro:GetDescendants()) do
-        if (d:IsA("VehicleSeat") or d:IsA("Seat")) and d.Occupant ~= nil then
-            return true
-        end
+-- true se o assento do motorista existe e está livre
+local function driveSeatLivre(carro)
+    local seat = acharDriveSeat(carro)
+    if not seat then return false end
+    if not (seat:IsA("Seat") or seat:IsA("VehicleSeat")) then
+        return false -- peça comum: não dá pra sentar, então não lista
     end
-    return false
+    return seat.Occupant == nil
 end
 
--- lista de veículos VAZIOS (rótulo -> Model)
+-- lista de veículos com DriveSeat LIVRE (rótulo -> Model)
 local function montarLista()
     local nomes, mapa = {}, {}
     local pasta = Workspace:FindFirstChild("CarrosSpawnados")
@@ -16,7 +16,7 @@ local function montarLista()
 
     local modelos = {}
     local function adicionar(m)
-        if m:IsA("Model") and not temOcupante(m) then
+        if m:IsA("Model") and driveSeatLivre(m) then
             table.insert(modelos, m)
         end
     end
@@ -31,7 +31,7 @@ local function montarLista()
         end
     end
 
-    -- numeração só entre os carros que sobraram após o filtro
+    -- numeração só entre os carros que passaram no filtro
     local contagem, usados = {}, {}
     for _, m in ipairs(modelos) do
         contagem[m.Name] = (contagem[m.Name] or 0) + 1
