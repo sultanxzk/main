@@ -10,8 +10,11 @@ local Window = MacLib:Window({
     Subtitle = "v1.0",
 })
 
+-- Grupo de abas (obrigatório para aparecerem na barra lateral)
+local Grupo = Window:TabGroup()
+
 -- ===== ABA: MOVIMENTO =====
-local TabMov = Window:Tab({ Name = "Movimento" })
+local TabMov = Grupo:Tab({ Name = "Movimento" })
 local SecMov = TabMov:Section({ Side = "Left" })
 
 SecMov:Toggle({
@@ -35,8 +38,8 @@ SecMov:Slider({
     end,
 }, "SpeedSlider")
 
--- ===== ABA: JOGADOR (exemplo; adicione novos arquivos em funcoes/) =====
-local TabJog = Window:Tab({ Name = "Jogador" })
+-- ===== ABA: JOGADOR (exemplo) =====
+local TabJog = Grupo:Tab({ Name = "Jogador" })
 local SecJog = TabJog:Section({ Side = "Left" })
 
 SecJog:Button({
@@ -47,7 +50,7 @@ SecJog:Button({
 })
 
 -- ===== ABA: CONFIG =====
-local TabCfg = Window:Tab({ Name = "Config" })
+local TabCfg = Grupo:Tab({ Name = "Config" })
 local SecCfg = TabCfg:Section({ Side = "Left" })
 
 SecCfg:Button({
@@ -57,3 +60,6 @@ SecCfg:Button({
         Window:Unload()
     end,
 })
+
+-- Abre já na primeira aba
+TabMov:Select()
