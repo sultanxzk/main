@@ -54,7 +54,7 @@ SecMov:Slider({
 local TabVeic = Grupo:Tab({ Name = "Veículos", Image = "rbxassetid://18821914323" })
 local SecVeic = TabVeic:Section({ Side = "Left" })
 
--- Carrega a função uma vez (Estado ainda desligado) para expor Hub.ListarVeiculos
+-- Carrega a função uma vez (Estado desligado, não puxa nada) para expor Hub.ListarVeiculos
 Hub.Executar("puxarveiculos")
 
 local DropVeiculos = SecVeic:Dropdown({
@@ -75,21 +75,12 @@ SecVeic:Button({
         DropVeiculos:ClearOptions()
         DropVeiculos:InsertOptions(Hub.ListarVeiculos())
     end,
-}, "PuxarVeiculosAtualizar")
-
-SecVeic:Toggle({
-    Name     = "Puxar Veículo",
-    Default  = false,
-    Callback = function(v)
-        Hub.Estado.PuxarVeiculos = v
-        Hub.Executar("puxarveiculos")
-    end,
-}, "PuxarVeiculosToggle")
+})
 
 SecVeic:Slider({
     Name          = "Distância",
-    Default       = 15,
-    Minimum       = 5,
+    Default       = 10,
+    Minimum       = 3,
     Maximum       = 100,
     DisplayMethod = "Round",
     Precision     = 0,
@@ -97,6 +88,14 @@ SecVeic:Slider({
         Hub.Valores.PuxarVeiculosValor = v
     end,
 }, "PuxarVeiculosSlider")
+
+SecVeic:Button({
+    Name     = "Puxar veículo",
+    Callback = function()
+        Hub.Estado.PuxarVeiculos = true
+        Hub.Executar("puxarveiculos")
+    end,
+})
 
 -- ===== ABA: JOGADOR (exemplo) =====
 local TabJog = Grupo:Tab({ Name = "Jogador", Image = "rbxassetid://18821914323" })
