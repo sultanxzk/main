@@ -1,16 +1,25 @@
 -- visual.lua | Apenas interface. Callbacks só disparam os arquivos de funcoes/
 local Hub = getgenv().Hub
 
-local MacLib = loadstring(game:HttpGet(
-    "https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.lua"
-))()
+-- Carrega a MacLib com checagem de erro clara
+local URL_LIB = "https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.txt"
+local okHttp, codigo = pcall(game.HttpGet, game, URL_LIB)
+assert(okHttp and type(codigo) == "string", "Falha ao baixar a MacLib: " .. tostring(codigo))
+
+local fn, errCompilar = loadstring(codigo)
+assert(fn, "MacLib baixada mas inválida: " .. tostring(errCompilar))
+
+local MacLib = fn()
 
 local Window = MacLib:Window({
-    Title    = "Meu Script Hub",
-    Subtitle = "v1.0",
-    Size     = UDim2.fromOffset(700, 480),
-    Keybind  = Enum.KeyCode.RightControl, -- mostra/esconde o menu
-    AcrylicBlur = true,
+    Title        = "Meu Script Hub",
+    Subtitle     = "v1.0",
+    Size         = UDim2.fromOffset(700, 480),
+    DragStyle    = 2,
+    DisabledWindowControls = {},
+    ShowUserInfo = true,
+    Keybind      = Enum.KeyCode.RightControl, -- mostra/esconde o menu
+    AcrylicBlur  = true,
 })
 
 -- As abas ficam dentro de um TabGroup
