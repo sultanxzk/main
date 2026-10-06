@@ -50,6 +50,54 @@ SecMov:Slider({
     end,
 }, "SpeedSlider")
 
+-- ===== ABA: VEÍCULOS =====
+local TabVeic = Grupo:Tab({ Name = "Veículos", Image = "rbxassetid://18821914323" })
+local SecVeic = TabVeic:Section({ Side = "Left" })
+
+-- Carrega a função uma vez (Estado ainda desligado) para expor Hub.ListarVeiculos
+Hub.Executar("puxarveiculos")
+
+local DropVeiculos = SecVeic:Dropdown({
+    Name     = "Veículo",
+    Search   = true,
+    Multi    = false,
+    Required = false,
+    Options  = Hub.ListarVeiculos and Hub.ListarVeiculos() or {},
+    Default  = nil,
+    Callback = function(v)
+        Hub.Valores.PuxarVeiculosSelecionado = v
+    end,
+}, "PuxarVeiculosDropdown")
+
+SecVeic:Button({
+    Name     = "Atualizar lista",
+    Callback = function()
+        DropVeiculos:ClearOptions()
+        DropVeiculos:InsertOptions(Hub.ListarVeiculos())
+    end,
+}, "PuxarVeiculosAtualizar")
+
+SecVeic:Toggle({
+    Name     = "Puxar Veículo",
+    Default  = false,
+    Callback = function(v)
+        Hub.Estado.PuxarVeiculos = v
+        Hub.Executar("puxarveiculos")
+    end,
+}, "PuxarVeiculosToggle")
+
+SecVeic:Slider({
+    Name          = "Distância",
+    Default       = 15,
+    Minimum       = 5,
+    Maximum       = 100,
+    DisplayMethod = "Round",
+    Precision     = 0,
+    Callback = function(v)
+        Hub.Valores.PuxarVeiculosValor = v
+    end,
+}, "PuxarVeiculosSlider")
+
 -- ===== ABA: JOGADOR (exemplo) =====
 local TabJog = Grupo:Tab({ Name = "Jogador", Image = "rbxassetid://18821914323" })
 local SecJog = TabJog:Section({ Side = "Left" })
@@ -72,7 +120,7 @@ SecCfg:Button({
     end,
 })
 
--- Salvamento de configs (usa as flags "SpeedToggle" e "SpeedSlider")
+-- Salvamento de configs (usa as flags "SpeedToggle", "SpeedSlider" e as de veículos)
 pcall(function()
     MacLib:SetFolder("MeuScriptHub")
     TabCfg:InsertConfigSection("Right")
